@@ -50,7 +50,9 @@ Image *load_image(char *filename) {
 void delete_image(Image *image) {
     if(image != NULL){
         free(image->pixels);
+        image->pixels = NULL;
         free(image);
+        image = NULL;
     }
 }
 
