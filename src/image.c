@@ -66,7 +66,7 @@ unsigned short get_image_height(Image *image) {
 
 unsigned char get_image_intensity(Image *image, unsigned int row, unsigned int col) {
     printf("%u\n", image->pixels[row*col]);
-    return image->pixels[row*col];
+    return image->pixels[row * 3 + col];
 }
 
 unsigned int hide_message(char *message, char *input_filename, char *output_filename) {
