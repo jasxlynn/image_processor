@@ -12,6 +12,8 @@ int main() {
     /******************************* create_quadtree *******************************/
     double max_rmse = 25;
     Image *image = load_image("images/building1.ppm");
+    
+    printf("\nTest %u", get_image_intensity(image, 3,2));
 
     QTNode *root = create_quadtree(image, max_rmse);
     // See tests/input/load_preorder_qt1_qtree.txt for the expected results

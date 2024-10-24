@@ -5,13 +5,13 @@ Image *load_image(char *filename) {
     FILE *fp = fopen(filename, "r");
     //check if file is NULL
     if (fp == NULL){
-        ERROR("File is NULL");
+        ERROR("File is empty");
         exit(EXIT_FAILURE);
     }
 
     //check if valid PPM file
-    char buffer[100];
-    char format_variant[2];
+    char buffer[1024];
+    char format_variant[3];
     unsigned int width, height; 
 
     fgets(buffer, sizeof(buffer), fp);
@@ -33,14 +33,14 @@ Image *load_image(char *filename) {
 
     img->width = width;
     img->height = height; 
-    img->pixels = malloc(width * height * sizeof(unsigned int)); 
+    img->pixels = malloc(width * height * 3 * sizeof(unsigned int)); 
 
-    for(unsigned int i = 0; i < width * height; i++){
-        unsigned int r, g, b; 
+    for (unsigned int i = 0; i < width * height; i++) {
+        unsigned int r, g, b;
         fscanf(fp, "%u %u %u", &r, &g, &b);
-        img->pixels[i * 3] = r;
-        img->pixels[i * 3 + 1] = g;
-        img->pixels[i * 3 + 2] = b;
+        img->pixels[i * 3] = (unsigned char)r;      
+        img->pixels[i * 3 + 1] = (unsigned char)g;   
+        img->pixels[i * 3 + 2] = (unsigned char)b;  
     }
 
     fclose(fp);
@@ -49,7 +49,7 @@ Image *load_image(char *filename) {
 
 void delete_image(Image *image) {
     if(image != NULL){
-        free(image->pixels);
+        free((image)->pixels);
         image->pixels = NULL;
         free(image);
         image = NULL;
@@ -65,8 +65,8 @@ unsigned short get_image_height(Image *image) {
 }
 
 unsigned char get_image_intensity(Image *image, unsigned int row, unsigned int col) {
-    printf("%u\n", image->pixels[row*col]);
-    return image->pixels[row * 3 + col];
+    unsigned int index = (row * image->width + col) * 3;
+    return image->pixels[index];
 }
 
 unsigned int hide_message(char *message, char *input_filename, char *output_filename) {

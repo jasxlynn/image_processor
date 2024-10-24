@@ -10,9 +10,9 @@
 typedef struct Image {
      unsigned int width;
      unsigned int height;
-     unsigned char *pixels; 
+     unsigned int *pixels; 
 } Image;
-#define MAX_SIZE 256
+
 
 Image *load_image(char *filename);
 void delete_image(Image *image);
