@@ -17,10 +17,13 @@ Image *load_image(char *filename) {
     fgets(buffer, sizeof(buffer), fp);
     sscanf(buffer, "%s", format_variant);
     
+    //check valid file type
     if(strcmp(format_variant, "P3") != 0){
         ERROR("Invalid file type");
         exit(EXIT_FAILURE); 
     }   
+
+    //check for comment line
     fgets(buffer, sizeof(buffer), fp);
     while(buffer[0] == '#'){
         fgets(buffer, sizeof(buffer), fp);
@@ -35,6 +38,7 @@ Image *load_image(char *filename) {
     img->height = height; 
     img->pixels = malloc(width * height * 3 * sizeof(unsigned int)); 
 
+    //input pixel data
     for (unsigned int i = 0; i < width * height; i++) {
         unsigned int r, g, b;
         fscanf(fp, "%u %u %u", &r, &g, &b);

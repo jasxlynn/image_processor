@@ -10,8 +10,18 @@
 #define ERROR(...) do {fprintf(stderr, "[          ] [ ERR  ] "); fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\n"); fflush(stderr);} while(0) 
 
 typedef struct QTNode {
-    char placeholder[1];  // This is a placeholder. You should not use this struct.    
+    unsigned char node;
+    unsigned char intensity;
+    unsigned int row;
+    unsigned int height;
+    unsigned int col;   
+    unsigned int width;
+    struct QTNode *children[4];
 } QTNode;
+
+double calculate_avg_intensity(Image *image, unsigned int row, unsigned int col, unsigned int height, unsigned int width);
+double calculate_rmse(Image *image, double avg_intensity, unsigned int row, unsigned int col, unsigned int width, unsigned int height);
+QTNode *create_quadtree_helper(Image *image, double max_rmse, unsigned int width, unsigned int height, unsigned int row, unsigned int col);
 
 QTNode *create_quadtree(Image *image, double max_rmse);  
 QTNode *get_child1(QTNode *node);
