@@ -197,31 +197,64 @@ QTNode *load_preorder_qt(char *filename) {
         exit(EXIT_FAILURE);
     }
 
-    QTNode *root = load_preorder_qt_helper(fp);
+    QTNode *root = (QTNode*)(malloc(sizeof(QTNode)));
+    root = load_preorder_qt_helper(fp, root);
     fclose(fp);
     return root;
 }
 
-QTNode *load_preorder_qt_helper(FILE *fp){
-    unsigned char type;
-    unsigned int avg_intensity, starting_row, height, starting_column,width;
+// QTNode *load_preorder_qt_helper(FILE *fp){
+//     unsigned char type;
+//     unsigned int avg_intensity, starting_row, height, starting_column,width;
 
-     if (fscanf(fp, "%c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width) != 6) {
-        return NULL;
-    }
+//      if (fscanf(fp, "%c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width) != 6) {
+//         return NULL;
+//     }
    
-    printf("TYPE %c\n", type);
+//     printf("TYPE %c\n", type);
 
-    QTNode *node = create_node(avg_intensity, starting_row, height, starting_column, width);
-    if(type == 'N'){
-        node->children[0] = load_preorder_qt_helper(fp);
-        node->children[1] = load_preorder_qt_helper(fp);
-        node->children[2] = load_preorder_qt_helper(fp);
-        node->children[3] = load_preorder_qt_helper(fp);
-    }
+//     QTNode *node = create_node(avg_intensity, starting_row, height, starting_column, width);
+//     if(type == 'N'){
+//         printf("fsdfsd\n");
+//         node->children[0] = load_preorder_qt_helper(fp);
+//         node->children[1] = load_preorder_qt_helper(fp);
+//         node->children[2] = load_preorder_qt_helper(fp);
+//         node->children[3] = load_preorder_qt_helper(fp);
+//     }
     
+//     return node;
+// }
+QTNode *load_preorder_qt_helper(FILE *fp, QTNode *parent) {
+    unsigned char type;
+    unsigned int avg_intensity, starting_row, height, starting_column, width;
+
+    if (fscanf(fp, " %c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width) != 6) {
+        return NULL; 
+    }
+ 
+    QTNode *node = create_node(avg_intensity, starting_row, height, starting_column, width);
+    
+    if (node == NULL) {
+        return NULL; 
+    }
+
+    if (parent != NULL) {
+        for (int i = 0; i < 4; i++) {
+            if (parent->children[i] == NULL) {
+                parent->children[i] = node; 
+                break;
+            }
+        }
+    }
+
+    if (type == 'N') { 
+        for (int i = 0; i < 4; i++) {
+            node->children[i] = load_preorder_qt_helper(fp, node); 
+        }
+    }
     return node;
 }
+
 
 QTNode *create_node(unsigned int intensity, unsigned int row, unsigned int height, unsigned int col, unsigned int width){
     QTNode *node = (QTNode *)malloc(sizeof(QTNode));
