@@ -141,15 +141,17 @@ void delete_quadtree(QTNode *root) {
 }
 
 void save_qtree_as_ppm(QTNode *root, char *filename) {
-    FILE *fp = fopen(filename, "w");
-    if ((fp = fopen(filename, "w")) == NULL){
-        ERROR("could not write to file");
-        exit(EXIT_FAILURE);
-    }
+    (void)root;
+    (void)filename;
+    // FILE *fp = fopen(filename, "w");
+    // if ((fp = fopen(filename, "w")) == NULL){
+    //     ERROR("could not write to file");
+    //     exit(EXIT_FAILURE);
+    // }
 
-    fprintf(fp, "%s", "P3");
-    fprintf(fp, "%u %u", root->width, root->height);
-    fprintf(fp, "%u", 255);
+    // fprintf(fp, "%s", "P3");
+    // fprintf(fp, "%u %u", root->width, root->height);
+    // fprintf(fp, "%u", 255);
 
 }
 
