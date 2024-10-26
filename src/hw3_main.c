@@ -11,7 +11,7 @@ int main() {
 
     /******************************* create_quadtree *******************************/
     // double max_rmse = 25;
-    Image *image = load_image("images/building1.ppm");
+    // Image *image = load_image("images/building1.ppm");
     
     prepare_input_image_file("tiny.ppm");
     Image *test = load_image("images/tiny.ppm");
@@ -24,7 +24,7 @@ int main() {
     // See tests/input/load_preorder_qt1_qtree.txt for the expected results
     // You will need to write your own code to verify that your quadtree was constructed properly
     // delete_quadtree(root);
-    delete_image(image);
+    // delete_image(image);
 
 
 
@@ -36,7 +36,7 @@ int main() {
     // delete_quadtree(root); 
 
     /******************************* save_preorder_qt *******************************/
-    image = load_image("images/building1.ppm"); 
+    // image = load_image("images/building1.ppm"); 
 
     // root = create_quadtree(image, 25);
     // See tests/input/load_preorder_qt1_qtree.txt for expected output
@@ -44,29 +44,29 @@ int main() {
     // save_preorder_qt(root, "tests/output/save_preorder_qt1_qtree.txt");
 
     // delete_quadtree(root);
-    delete_image(image);
+    // delete_image(image);
 
     /******************************* save_qtree_as_ppm *******************************/
-    image = load_image("images/building1.ppm"); 
+    // image = load_image("images/building1.ppm"); 
     // root = create_quadtree(image, 25);
     //COMMMENTED OUT NEXT LINE
     // save_qtree_as_ppm(root, "tests/output/save_qtree_as_ppm1.ppm");
     // See tests/expected/save_qtree_as_ppm1.ppm for the expected file.
     // Visual inspection is generally not sufficient to determine if your output image is correct.
     // You will need to write code to more rigorously check your output image for correctness.
-    delete_image(image); 
-    // delete_quadtree(root);
+    // delete_image(image); 
+    // // delete_quadtree(root);
 
-    /******************************* hide_message and reveal_message *******************************/
-    prepare_input_image_file("wolfie-tiny.ppm");
-    hide_message("0000000000111111111122222222223333333333", "images/wolfie-tiny.ppm", "tests/output/hide_message1.ppm");
-    char *message = reveal_message("tests/output/hide_message1.ppm");
-    printf("Message: %s\n", message);
-    free(message);
+    // /******************************* hide_message and reveal_message *******************************/
+    // prepare_input_image_file("wolfie-tiny.ppm");
+    // hide_message("0000000000111111111122222222223333333333", "images/wolfie-tiny.ppm", "tests/output/hide_message1.ppm");
+    // char *message = reveal_message("tests/output/hide_message1.ppm");
+    // printf("Message: %s\n", message);
+    // free(message);
 
-    /******************************* hide_image and reveal_image *******************************/
-    hide_image("images/wolfie-tiny.ppm", "images/building1.ppm", "tests/output/hide_image1.ppm");
-    reveal_image("tests/output/hide_image1.ppm", "tests/output/reveal_image1.ppm");
+    // /******************************* hide_image and reveal_image *******************************/
+    // hide_image("images/wolfie-tiny.ppm", "images/building1.ppm", "tests/output/hide_image1.ppm");
+    // reveal_image("tests/output/hide_image1.ppm", "tests/output/reveal_image1.ppm");
 
     return 0;
 }
