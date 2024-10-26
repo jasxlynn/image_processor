@@ -40,11 +40,9 @@ Image *load_image(char *filename) {
 
     //input pixel data
     for (unsigned int i = 0; i < width * height; i++) {
-        unsigned int r, g, b;
-        fscanf(fp, "%u %u %u", &r, &g, &b);
+        unsigned int r;
+        fscanf(fp, "%u", &r);
         img->pixels[i * 3] = (unsigned char)r;      
-        img->pixels[i * 3 + 1] = (unsigned char)g;   
-        img->pixels[i * 3 + 2] = (unsigned char)b;  
     }
 
     fclose(fp);
@@ -69,7 +67,7 @@ unsigned short get_image_height(Image *image) {
 }
 
 unsigned char get_image_intensity(Image *image, unsigned int row, unsigned int col) {
-    unsigned int index = (row * image->width + col) * 3;
+    unsigned int index = (row * image->width + col);
     return image->pixels[index];
 }
 
