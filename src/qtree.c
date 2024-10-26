@@ -198,7 +198,7 @@ QTNode *load_preorder_qt(char *filename) {
     }
 
     QTNode *root = (QTNode*)(malloc(sizeof(QTNode)));
-    root = load_preorder_qt_helper(fp, root);
+    root = load_preorder_qt_helper(fp, NULL);
     fclose(fp);
     return root;
 }
@@ -228,7 +228,7 @@ QTNode *load_preorder_qt_helper(FILE *fp, QTNode *parent) {
     unsigned char type;
     unsigned int avg_intensity, starting_row, height, starting_column, width;
 
-    if (fscanf(fp, " %c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width) != 6) {
+    if (fscanf(fp, "%c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width) != 6) {
         return NULL; 
     }
  
