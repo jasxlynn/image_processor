@@ -8,12 +8,7 @@ QTNode *create_quadtree(Image *image, double max_rmse) {
     return create_quadtree_helper(image, max_rmse, width, height, 0, 0);
 }   
 
-void print_node(QTNode *node){
-    printf("Intensity %u\n", node->intensity);
-    printf("Row %u\n", node->row);
-    printf("Col %u\n", node->col);
-    printf("Height %u\n", node->height);
-}
+
 
 QTNode *create_quadtree_helper(Image *image, double max_rmse, unsigned int width, unsigned int height, unsigned int row, unsigned int col) {
     QTNode *node = (QTNode *)malloc(sizeof(QTNode));
@@ -25,7 +20,6 @@ QTNode *create_quadtree_helper(Image *image, double max_rmse, unsigned int width
     node->height = height;
     node->width = width;
     
-    print_node(node);
     for (int i = 0; i < 4; i++) {
         node->children[i] = NULL;
     }
@@ -74,7 +68,6 @@ double calculate_avg_intensity(Image *image, unsigned int row, unsigned int col,
     for (unsigned int r = row; r < row + height; r++) {
         for (unsigned int c = col; c < col + width; c++) {
             total_intensity += get_image_intensity(image, r, c); 
-            printf("Total Intensity %f\n", total_intensity);
         }
     }
     
@@ -151,29 +144,33 @@ void save_qtree_as_ppm(QTNode *root, char *filename) {
     fprintf(fp, "%u %u\n", root->width, root->height); 
     fprintf(fp, "255\n");    
 
-    save_qtree_as_ppm_helper(root, fp);
-    
+    // save_qtree_as_ppm_helper(root, fp , 0, 0);
+
     fclose(fp);
 }
 
-void save_qtree_as_ppm_helper(QTNode *node, FILE *fp){
-    if(node == NULL){
-        return;
-    }
+// void save_qtree_as_ppm_helper(QTNode *node, FILE *fp, unsigned int row_offset, unsigned int col_offset){
+//     // if(node == NULL){
+//     //     return;
+//     // }
 
-    if(node->children[0] == NULL && node->children[1] == NULL && node->children[2] == NULL && node->children[3] == NULL){
-        for(unsigned int i = 0; i < node->height; i++){
-            for(unsigned int j = 0; j < node->width; j++){
-                fprintf(fp, "%u %u %u", node->intensity, node->intensity, node->intensity);
-            }
-            fprintf(fp, "\n");
-        }
-    } else{
-        for(int i = 0; i < 4; i++){
-            save_qtree_as_ppm_helper(node->children[i], fp);
-        }
-    }
-}
+//     // if(node->children[0] == NULL && node->children[1] == NULL && node->children[2] == NULL && node->children[3] == NULL){
+//     //     for(unsigned int i = 0; i < node->height; i++){
+//     //         for(unsigned int j = 0; j < node->width; j++){
+//     //             fprintf(fp, "%u %u %u", node->intensity, node->intensity, node->intensity);
+//     //         }
+//     //         fprintf(fp, "\n");
+//     //     }
+//     // } else{
+//     //     unsigned int half_width = node->width / 2;
+//     //     unsigned int half_height = node->height / 2;
+
+//     //     save_qtree_as_ppm_helper(node->children[0], fp, row_offset, col_offset);                     
+//     //     save_qtree_as_ppm_helper(node->children[1], fp, row_offset, col_offset + half_width);          
+//     //     save_qtree_as_ppm_helper(node->children[2], fp, row_offset + half_height, col_offset);         
+//     //     save_qtree_as_ppm_helper(node->children[3], fp, row_offset + half_height, col_offset + half_width);
+//     // }
+// }
 
 QTNode *load_preorder_qt(char *filename) {
     (void)filename;

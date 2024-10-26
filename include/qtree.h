@@ -23,7 +23,6 @@ double calculate_avg_intensity(Image *image, unsigned int row, unsigned int col,
 double calculate_rmse(Image *image, double avg_intensity, unsigned int row, unsigned int col, unsigned int width, unsigned int height);
 QTNode *create_quadtree_helper(Image *image, double max_rmse, unsigned int width, unsigned int height, unsigned int row, unsigned int col);
 
-void print_node(QTNode *node);
 
 QTNode *create_quadtree(Image *image, double max_rmse);  
 QTNode *get_child1(QTNode *node);
@@ -34,7 +33,7 @@ unsigned char get_node_intensity(QTNode *node);
 void delete_quadtree(QTNode *root);
 void save_qtree_as_ppm(QTNode *root, char *filename); 
 
-void save_qtree_as_ppm_helper(QTNode *node, FILE *fp);
+void save_qtree_as_ppm_helper(QTNode *node, FILE *fp, unsigned int row_offset, unsigned int col_offset);
 
 QTNode *load_preorder_qt(char *filename);
 void save_preorder_qt(QTNode *root, char *filename);  
