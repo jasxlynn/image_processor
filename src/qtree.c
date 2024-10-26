@@ -141,25 +141,39 @@ void delete_quadtree(QTNode *root) {
 }
 
 void save_qtree_as_ppm(QTNode *root, char *filename) {
-    (void)root;
-    (void)filename;
-    // FILE *fp = fopen(filename, "w");
-    // if ((fp = fopen(filename, "w")) == NULL){
-    //     ERROR("could not write to file");
-    //     exit(EXIT_FAILURE);
-    // }
+    FILE *fp = fopen(filename, "w");
+    if (fp == NULL){
+        ERROR("could not write to file");
+        exit(EXIT_FAILURE);
+    }
 
-    // fprintf(fp, "%s", "P3");
-    // fprintf(fp, "%u %u", root->width, root->height);
-    // fprintf(fp, "%u", 255);
+    fprintf(fp, "P3\n");                         
+    fprintf(fp, "%u %u\n", root->width, root->height); 
+    fprintf(fp, "255\n");    
 
+    save_qtree_as_ppm_helper(root, fp);
+    
+    fclose(fp);
 }
 
-// void save_qtree_as_ppm_helper(QTNode *root, char *filename, unsigned int row_start, unsigned int col_start, unsigned int width, unsigned int height){
-//     if(root == NULL){return;}
+void save_qtree_as_ppm_helper(QTNode *node, FILE *fp){
+    if(node == NULL){
+        return;
+    }
 
-    
-// }
+    if(node->children[0] == NULL && node->children[1] == NULL && node->children[2] == NULL && node->children[3] == NULL){
+        for(unsigned int i = 0; i < node->height; i++){
+            for(unsigned int j = 0; j < node->width; j++){
+                fprintf(fp, "%u %u %u", node->intensity, node->intensity, node->intensity);
+            }
+            fprintf(fp, "\n");
+        }
+    } else{
+        for(int i = 0; i < 4; i++){
+            save_qtree_as_ppm_helper(node->children[i], fp);
+        }
+    }
+}
 
 QTNode *load_preorder_qt(char *filename) {
     (void)filename;

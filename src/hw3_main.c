@@ -10,15 +10,15 @@ int main() {
     prepare_input_image_file("building1.ppm"); // copies the image to the images/ directory
 
     /******************************* create_quadtree *******************************/
-    // double max_rmse = 25;
+    double max_rmse = 25;
     // Image *image = load_image("images/building1.ppm");
     
     prepare_input_image_file("tiny.ppm");
     Image *test = load_image("images/tiny.ppm");
     printf("Average intensity %f\n", calculate_avg_intensity(test, 0, 0, 2, 8));
     printf("RMSE %f\n", calculate_rmse(test,calculate_avg_intensity(test, 0, 0, 2, 8), 0, 0, 8, 2));
-    // QTNode *test1 = create_quadtree(test, max_rmse);
-    // save_qtree_as_ppm(test1, "test.txt");
+    QTNode *test1 = create_quadtree(test, max_rmse);
+    save_qtree_as_ppm(test1, "tests/output/test.ppm");
 
     // QTNode *root = create_quadtree(image, max_rmse);
     // See tests/input/load_preorder_qt1_qtree.txt for the expected results
