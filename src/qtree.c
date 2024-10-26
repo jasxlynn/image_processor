@@ -201,37 +201,24 @@ QTNode *load_preorder_qt(char *filename) {
     fclose(fp);
     return root;
 }
+
 QTNode *load_preorder_qt_helper(FILE *fp){
     unsigned char type;
     unsigned int avg_intensity, starting_row, height, starting_column,width;
    
     fscanf(fp, "%c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width);
 
+    QTNode *node = create_node(avg_intensity, starting_row, height, starting_column, width);
     if(type == 'L'){
-        QTNode *leaf = create_leaf_node( avg_intensity, starting_row, height, starting_column, width);
-        return leaf;
-    }else if(type == 'N'){
-        QTNode *node = create_internal_node(avg_intensity, starting_row, height, starting_column, width);
         node->children[0] = load_preorder_qt_helper(fp);
         node->children[1] = load_preorder_qt_helper(fp);
         node->children[2] = load_preorder_qt_helper(fp);
         node->children[3] = load_preorder_qt_helper(fp);
-        return node;
     }
-    return NULL;
-}
-QTNode *create_leaf_node(unsigned int intensity, unsigned int row, unsigned int height, unsigned int col, unsigned int width){
-    QTNode *leaf = (QTNode *)malloc(sizeof(QTNode));
-    leaf->intensity = intensity;
-    leaf->row = row;
-    leaf->height = height; 
-    leaf->col = col; 
-    leaf->width = width; 
-
-    return leaf; 
+    return node;
 }
 
-QTNode *create_internal_node(unsigned int intensity, unsigned int row, unsigned int height, unsigned int col, unsigned int width){
+QTNode *create_node(unsigned int intensity, unsigned int row, unsigned int height, unsigned int col, unsigned int width){
     QTNode *node = (QTNode *)malloc(sizeof(QTNode));
     node->intensity = intensity;
     node->row = row;
@@ -242,11 +229,9 @@ QTNode *create_internal_node(unsigned int intensity, unsigned int row, unsigned 
     for(int i = 0; i < 4; i++){
         node->children[i] = NULL; 
     }
-
     return node;
 
 }
-
 
 void save_preorder_qt(QTNode *root, char *filename) {
     (void)(root);
