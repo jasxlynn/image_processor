@@ -33,7 +33,7 @@ unsigned char get_node_intensity(QTNode *node);
 void delete_quadtree(QTNode *root);
 void save_qtree_as_ppm(QTNode *root, char *filename); 
 
-void save_qtree_as_ppm_helper(QTNode *node, FILE *fp, unsigned int row_offset, unsigned int col_offset);
+void save_qtree_as_ppm_helper(QTNode *node, unsigned char **img_arr, unsigned int row_offset, unsigned int col_offset);
 
 QTNode *load_preorder_qt(char *filename);
 void save_preorder_qt(QTNode *root, char *filename);  

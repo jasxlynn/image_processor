@@ -144,33 +144,48 @@ void save_qtree_as_ppm(QTNode *root, char *filename) {
     fprintf(fp, "%u %u\n", root->width, root->height); 
     fprintf(fp, "255\n");    
 
-    // save_qtree_as_ppm_helper(root, fp , 0, 0);
+    unsigned char **image_array = malloc(root->height * sizeof(unsigned char *));
+    for (unsigned int i = 0; i < root->height; i++) {
+        image_array[i] = malloc(root->width * sizeof(unsigned char));
+    }
+    save_qtree_as_ppm_helper(root, image_array, 0, 0);
+
+    for (unsigned int i = 0; i < root->height; i++) {
+        for (unsigned int j = 0; j < root->width; j++) {
+            unsigned char intensity = image_array[i][j];
+            fprintf(fp, "%u %u %u\n", intensity, intensity, intensity); 
+        }
+    }
+
+    for (unsigned int i = 0; i < root->height; i++) {
+        free(image_array[i]);
+    }
+    free(image_array);
 
     fclose(fp);
 }
 
-// void save_qtree_as_ppm_helper(QTNode *node, FILE *fp, unsigned int row_offset, unsigned int col_offset){
-//     // if(node == NULL){
-//     //     return;
-//     // }
+void save_qtree_as_ppm_helper(QTNode *node, unsigned char **img_arr, unsigned int row_offset, unsigned int col_offset){
+    if(node == NULL){
+        return;
+    }
 
-//     // if(node->children[0] == NULL && node->children[1] == NULL && node->children[2] == NULL && node->children[3] == NULL){
-//     //     for(unsigned int i = 0; i < node->height; i++){
-//     //         for(unsigned int j = 0; j < node->width; j++){
-//     //             fprintf(fp, "%u %u %u", node->intensity, node->intensity, node->intensity);
-//     //         }
-//     //         fprintf(fp, "\n");
-//     //     }
-//     // } else{
-//     //     unsigned int half_width = node->width / 2;
-//     //     unsigned int half_height = node->height / 2;
+    if (node->children[0] == NULL && node->children[1] == NULL && node->children[2] == NULL && node->children[3] == NULL) {
+    for (unsigned int i = 0; i < node->height; i++) {
+            for (unsigned int j = 0; j < node->width; j++) {
+                img_arr[row_offset + i][col_offset + j] = node->intensity;
+            }
+        }
+    } else {
+        unsigned int half_width = node->width / 2;
+        unsigned int half_height = node->height / 2;
 
-//     //     save_qtree_as_ppm_helper(node->children[0], fp, row_offset, col_offset);                     
-//     //     save_qtree_as_ppm_helper(node->children[1], fp, row_offset, col_offset + half_width);          
-//     //     save_qtree_as_ppm_helper(node->children[2], fp, row_offset + half_height, col_offset);         
-//     //     save_qtree_as_ppm_helper(node->children[3], fp, row_offset + half_height, col_offset + half_width);
-//     // }
-// }
+        save_qtree_as_ppm_helper(node->children[0], img_arr, row_offset, col_offset);                       
+        save_qtree_as_ppm_helper(node->children[1], img_arr, row_offset, col_offset + half_width);         
+        save_qtree_as_ppm_helper(node->children[2], img_arr, row_offset + half_height, col_offset);        
+        save_qtree_as_ppm_helper(node->children[3], img_arr, row_offset + half_height, col_offset + half_width);
+    }
+}   
 
 QTNode *load_preorder_qt(char *filename) {
     (void)filename;
