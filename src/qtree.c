@@ -205,6 +205,10 @@ QTNode *load_preorder_qt(char *filename) {
 QTNode *load_preorder_qt_helper(FILE *fp){
     unsigned char type;
     unsigned int avg_intensity, starting_row, height, starting_column,width;
+
+     if (fscanf(fp, " %c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width) != 6) {
+        return NULL;
+    }
    
     fscanf(fp, "%c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width);
 
