@@ -209,7 +209,7 @@ QTNode *load_preorder_qt_helper(FILE *fp){
     fscanf(fp, "%c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width);
 
     QTNode *node = create_node(avg_intensity, starting_row, height, starting_column, width);
-    if(type == 'L'){
+    if(type == 'N'){
         node->children[0] = load_preorder_qt_helper(fp);
         node->children[1] = load_preorder_qt_helper(fp);
         node->children[2] = load_preorder_qt_helper(fp);
