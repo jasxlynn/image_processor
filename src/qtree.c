@@ -206,11 +206,11 @@ QTNode *load_preorder_qt_helper(FILE *fp){
     unsigned char type;
     unsigned int avg_intensity, starting_row, height, starting_column,width;
 
-     if (fscanf(fp, " %c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width) != 6) {
+     if (fscanf(fp, "%c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width) != 6) {
         return NULL;
     }
    
-    fscanf(fp, "%c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width);
+    printf("TYPE %c\n", type);
 
     QTNode *node = create_node(avg_intensity, starting_row, height, starting_column, width);
     if(type == 'N'){
@@ -219,16 +219,28 @@ QTNode *load_preorder_qt_helper(FILE *fp){
         node->children[2] = load_preorder_qt_helper(fp);
         node->children[3] = load_preorder_qt_helper(fp);
     }
+    
     return node;
 }
 
 QTNode *create_node(unsigned int intensity, unsigned int row, unsigned int height, unsigned int col, unsigned int width){
     QTNode *node = (QTNode *)malloc(sizeof(QTNode));
+
+    if(node == NULL){
+        ERROR("node null");
+        exit(EXIT_FAILURE);
+    }
     node->intensity = intensity;
     node->row = row;
     node->height = height; 
     node->col = col; 
     node->width = width; 
+    printf("NEW NODE\n");
+    printf("Intensity %u\n", node->intensity);
+    printf("row %u\n", node->row);
+    printf("height %u\n", node->height);
+    printf("col %u\n", node->col);
+    printf("width %u\n\n", node->width);
 
     for(int i = 0; i < 4; i++){
         node->children[i] = NULL; 
