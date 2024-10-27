@@ -19,6 +19,7 @@ int main() {
     QTNode *test1 = create_quadtree(test, max_rmse);
     save_qtree_as_ppm(test1, "tests/output/test.ppm");
     test1 = load_preorder_qt("tests/input/test.txt");
+    save_preorder_qt(test1, "tests/output/text_file.txt");
 
     QTNode *root = create_quadtree(image, max_rmse);
     // // See tests/input/load_preorder_qt1_qtree.txt for the expected results

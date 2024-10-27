@@ -256,10 +256,13 @@ void save_preorder_qt(QTNode *root, char *filename) {
         exit(EXIT_FAILURE);
     }
     save_preorder_qt_helper(root, fp);
-
+    fclose(fp);
 }
 
 void save_preorder_qt_helper(QTNode *node, FILE *fp){
+    if(node == NULL){
+        return;
+    }
     unsigned int intensity, row, height, col, width;
     intensity = node->intensity;
     row = node->row;
