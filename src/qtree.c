@@ -55,7 +55,6 @@ QTNode *create_quadtree_helper(Image *image, double max_rmse, unsigned int width
     else {
         node->children[0] = node->children[1] = node->children[2] = node->children[3] = NULL;
     }
-
     return node;
 }
 
@@ -191,38 +190,36 @@ void save_qtree_as_ppm_helper(QTNode *node, unsigned char **img_arr, unsigned in
 QTNode *load_preorder_qt(char *filename) {
     FILE *fp = fopen(filename, "r");
 
-
     if(fp == NULL){
         ERROR("Fail");
         exit(EXIT_FAILURE);
     }
 
+    unsigned char type;
+    unsigned int avg_intensity, starting_row, height, starting_column, width;
+
     QTNode *root = (QTNode*)(malloc(sizeof(QTNode)));
-    root = load_preorder_qt_helper(fp);
+    fscanf(fp, "%c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width);
+    root = load_preorder_qt_helper(fp, height, width, avg_intensity, starting_column, starting_row, type);
     fclose(fp);
     return root;
 }
 
-QTNode *load_preorder_qt_helper(FILE *fp) {
-    unsigned char type;
-    unsigned int avg_intensity, starting_row, height, starting_column, width;
-
-    if (fscanf(fp, "%c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width) != 6) {
-        return NULL; 
+QTNode *load_preorder_qt_helper(FILE *fp, unsigned int prev_height, unsigned int prev_width, unsigned int intensity, unsigned int col, unsigned int row, unsigned char type) {
+    QTNode *node = create_node(intensity, row, prev_height, col, prev_width);
+    if(type == 'L'){
+        return node;
     }
 
-    printf("TYPE %c\n", type);
-    QTNode *node = create_node(avg_intensity, starting_row, height, starting_column, width);
-    
-    if (node == NULL) {
-        return NULL; 
-    }
-
-    if (type == 'N') { 
-        for (int i = 0; i < 4; i++) {
-            node->children[i] = load_preorder_qt_helper(fp); 
+    for(int i = 0; i < 4; i++){
+        unsigned int curr_height, curr_width;
+        fscanf(fp, "%c %u %u %u %u %u", &type, &intensity, &row, &curr_height, &col, &curr_width);
+        
+        if(prev_height == 2  * curr_height && prev_width == 2  * curr_width){
+            node->children[i] = load_preorder_qt_helper(fp, curr_height, curr_width, intensity, col, row, type);
         }
     }
+
     return node;
 }
 
