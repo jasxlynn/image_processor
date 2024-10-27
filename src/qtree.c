@@ -205,18 +205,26 @@ QTNode *load_preorder_qt(char *filename) {
     return root;
 }
 
-QTNode *load_preorder_qt_helper(FILE *fp, unsigned int prev_height, unsigned int prev_width, unsigned int intensity, unsigned int col, unsigned int row, unsigned char type) {
-    QTNode *node = create_node(intensity, row, prev_height, col, prev_width);
-    if(type == 'L'){
+QTNode *load_preorder_qt_helper(FILE *fp, unsigned int height, unsigned int width, unsigned int intensity, unsigned int col, unsigned int row, unsigned char type) {
+    QTNode *node = create_node(intensity, row, height, col, width);
+
+    if (type == 'L') {
+        printf("leaf nofe\n");
         return node;
     }
 
-    for(int i = 0; i < 4; i++){
-        unsigned int curr_height, curr_width;
-        fscanf(fp, "%c %u %u %u %u %u", &type, &intensity, &row, &curr_height, &col, &curr_width);
-        
-        if(prev_height == 2  * curr_height && prev_width == 2  * curr_width){
-            node->children[i] = load_preorder_qt_helper(fp, curr_height, curr_width, intensity, col, row, type);
+    for (int i = 0; i < 4; i++) {
+        unsigned int child_intensity, child_row, child_height, child_col, child_width;
+        unsigned char child_type;
+
+        if (fscanf(fp, " %c %u %u %u %u %u", &child_type, &child_intensity, &child_row, &child_height, &child_col, &child_width) != 6) {
+            return node;
+        }
+
+        // Only proceed if the child dimensions match half of the parent node
+        if (height == 2 * child_height && width == 2 * child_width) {
+            printf("child nofe\n");
+            node->children[i] = load_preorder_qt_helper(fp, child_height, child_width, child_intensity, child_col, child_row, child_type);
         }
     }
 
