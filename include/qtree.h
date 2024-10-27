@@ -37,7 +37,7 @@ void save_qtree_as_ppm_helper(QTNode *node, unsigned char **img_arr, unsigned in
 
 QTNode *load_preorder_qt(char *filename);
 QTNode *create_node(unsigned int intensity, unsigned int row, unsigned int height, unsigned int col, unsigned int width);
-QTNode *load_preorder_qt_helper(FILE *fp, unsigned int prev_height, unsigned int prev_width, unsigned int intensity, unsigned int col, unsigned int row, unsigned char type);
+QTNode *load_preorder_qt_helper(FILE *fp);
 void save_preorder_qt(QTNode *root, char *filename);  
 
 #endif // QTREE_H

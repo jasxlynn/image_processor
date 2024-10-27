@@ -195,41 +195,30 @@ QTNode *load_preorder_qt(char *filename) {
         exit(EXIT_FAILURE);
     }
 
-    unsigned char type;
-    unsigned int avg_intensity, starting_row, height, starting_column, width;
-
     QTNode *root = (QTNode*)(malloc(sizeof(QTNode)));
-    fscanf(fp, "%c %u %u %u %u %u", &type, &avg_intensity, &starting_row, &height, &starting_column, &width);
-    root = load_preorder_qt_helper(fp, height, width, avg_intensity, starting_column, starting_row, type);
+    root = load_preorder_qt_helper(fp);
     fclose(fp);
     return root;
 }
 
-QTNode *load_preorder_qt_helper(FILE *fp, unsigned int height, unsigned int width, unsigned int intensity, unsigned int col, unsigned int row, unsigned char type) {
+QTNode *load_preorder_qt_helper(FILE *fp) {
+    unsigned char type;
+    unsigned int intensity, row, height, col, width;
+
+    if (fscanf(fp, " %c %u %u %u %u %u", &type, &intensity, &row, &height, &col, &width) != 6) {
+        return NULL; 
+    }
+
     QTNode *node = create_node(intensity, row, height, col, width);
 
-    if (type == 'L') {
-        printf("leaf nofe\n");
-        return node;
-    }
-
-    for (int i = 0; i < 4; i++) {
-        unsigned int child_intensity, child_row, child_height, child_col, child_width;
-        unsigned char child_type;
-
-        if (fscanf(fp, " %c %u %u %u %u %u", &child_type, &child_intensity, &child_row, &child_height, &child_col, &child_width) != 6) {
-            return node;
-        }
-
-        // Only proceed if the child dimensions match half of the parent node
-        if (height == 2 * child_height && width == 2 * child_width) {
-            printf("child nofe\n");
-            node->children[i] = load_preorder_qt_helper(fp, child_height, child_width, child_intensity, child_col, child_row, child_type);
+    if (type == 'N') {
+        for (int i = 0; i < 4; i++) {
+            node->children[i] = load_preorder_qt_helper(fp);
         }
     }
-
     return node;
 }
+
 
 
 QTNode *create_node(unsigned int intensity, unsigned int row, unsigned int height, unsigned int col, unsigned int width){
