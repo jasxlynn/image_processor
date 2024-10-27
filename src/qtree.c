@@ -189,62 +189,47 @@ void save_qtree_as_ppm_helper(QTNode *node, unsigned char **img_arr, unsigned in
 
 QTNode *load_preorder_qt(char *filename) {
     FILE *fp = fopen(filename, "r");
-
-    if(fp == NULL){
-        ERROR("Fail");
-        exit(EXIT_FAILURE);
+    if (fp == NULL) {
+        perror("Error opening file");
+        return NULL;
     }
 
-    QTNode *root = (QTNode*)(malloc(sizeof(QTNode)));
-    root = load_preorder_qt_helper(fp);
-    fclose(fp);
-    return root;
+    QTNode *root = load_preorder_qt_helper(fp);
+    fclose(fp); 
+    return root; 
 }
 
 QTNode *load_preorder_qt_helper(FILE *fp) {
-    unsigned char type;
-    unsigned int intensity, row, height, col, width;
-
-    if (fscanf(fp, " %c %u %u %u %u %u", &type, &intensity, &row, &height, &col, &width) != 6) {
-        return NULL; 
+    char type;
+    if (fscanf(fp, " %c", &type) != 1) {
+        return NULL;
     }
 
-    QTNode *node = create_node(intensity, row, height, col, width);
+    QTNode *node = malloc(sizeof(QTNode));
+    if (node == NULL) {
+        exit(EXIT_FAILURE); 
+    }
+
+    unsigned int intensity, row, height, col, width;
+
+    fscanf(fp, "%u %u %u %u %u", &intensity, &row, &height, &col, &width);
+    node->intensity = intensity;
+    node->row = row;
+    node->height = height;
+    node->col = col;
+    node->width = width;
+
+    for (int i = 0; i < 4; i++) {
+        node->children[i] = NULL;
+    }
 
     if (type == 'N') {
         for (int i = 0; i < 4; i++) {
             node->children[i] = load_preorder_qt_helper(fp);
         }
     }
+
     return node;
-}
-
-
-
-QTNode *create_node(unsigned int intensity, unsigned int row, unsigned int height, unsigned int col, unsigned int width){
-    QTNode *node = (QTNode *)malloc(sizeof(QTNode));
-
-    if(node == NULL){
-        ERROR("node null");
-        exit(EXIT_FAILURE);
-    }
-    node->intensity = intensity;
-    node->row = row;
-    node->height = height; 
-    node->col = col; 
-    node->width = width; 
-    printf("NEW NODE\n");
-    printf("Intensity %u\n", node->intensity);
-    printf("row %u\n", node->row);
-    printf("height %u\n", node->height);
-    printf("col %u\n", node->col);
-    printf("width %u\n\n", node->width);
-
-    for(int i = 0; i < 4; i++){
-        node->children[i] = NULL; 
-    }
-    return node;
-
 }
 
 void save_preorder_qt(QTNode *root, char *filename) {
