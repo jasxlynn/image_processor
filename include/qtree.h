@@ -39,5 +39,6 @@ QTNode *load_preorder_qt(char *filename);
 QTNode *create_node(unsigned int intensity, unsigned int row, unsigned int height, unsigned int col, unsigned int width);
 QTNode *load_preorder_qt_helper(FILE *fp);
 void save_preorder_qt(QTNode *root, char *filename);  
+void save_preorder_qt_helper(QTNode *node, FILE *fp);
 
 #endif // QTREE_H

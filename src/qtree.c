@@ -255,6 +255,31 @@ void save_preorder_qt(QTNode *root, char *filename) {
         ERROR("could not write to file");
         exit(EXIT_FAILURE);
     }
+    save_preorder_qt_helper(root, fp);
 
 }
 
+void save_preorder_qt_helper(QTNode *node, FILE *fp){
+    unsigned int intensity, row, height, col, width;
+    intensity = node->intensity;
+    row = node->row;
+    height = node->height;
+    col = node->col;
+    width = node->width;
+
+     int isLeaf = 1;
+    for (int i = 0; i < 4; i++) {
+        if (node->children[i] != NULL) {
+            isLeaf = 0; 
+            break;
+        }
+    }
+    if (isLeaf) {
+        fprintf(fp, "%c %u %u %u %u %u\n", 'L', intensity, row, height, col, width);
+    } else {
+        fprintf(fp, "%c %u %u %u %u %u\n", 'N', intensity, row, height, col, width);
+        for (int i = 0; i < 4; i++) {
+            save_preorder_qt_helper(node->children[i], fp);
+        }
+    }
+}
