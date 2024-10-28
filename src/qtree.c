@@ -218,6 +218,8 @@ QTNode *load_preorder_qt_helper(FILE *fp) {
     node->width = width;
 
     printf("intensity %u\n", intensity);
+    printf("row %u\n", row);
+    printf("heighy %u \n",height);
 
     for (int i = 0; i < 4; i++) {
         node->children[i] = NULL;
@@ -232,6 +234,7 @@ QTNode *load_preorder_qt_helper(FILE *fp) {
         }else if(node->width > 1 && node->height > 1){
             node->children[3] = load_preorder_qt_helper(fp);
         }
+        return node;
     }
     return node;
 }
