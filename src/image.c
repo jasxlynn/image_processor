@@ -11,14 +11,15 @@ Image *load_image(char *filename) {
 
     //check if valid PPM file
     char buffer[1024];
-    char format_variant[3];
+    char magic_num[3];
     unsigned int width, height; 
 
     fgets(buffer, sizeof(buffer), fp);
-    sscanf(buffer, "%s", format_variant);
+    sscanf(buffer, "%s", magic_num);
     
-    if(strcmp(format_variant, "P3") != 0){
+    if(strcmp(magic_num, "P3") != 0){
         ERROR("Invalid file type");
+        fclose(fp);
         exit(EXIT_FAILURE); 
     }   
     fgets(buffer, sizeof(buffer), fp);
@@ -69,12 +70,32 @@ unsigned char get_image_intensity(Image *image, unsigned int row, unsigned int c
     return image->pixels[index];
 }
 
-unsigned int hide_message(char *message, char *input_filename, char *output_filename) {
-    (void)message;
-    (void)input_filename;
-    (void)output_filename;
-    return 0;
-}
+// unsigned int hide_message(char *message, char *input_filename, char *output_filename) {
+//     int length = strlen(message);
+
+//     FILE *fp1 = fopen(input_filename, "r");
+//     FILE *fp2 = fopen(output_filename, "w");
+
+//     //scan header
+//     char format_var[3];
+//     int width, height;
+//     fscanf(fp1, "%s", format_var);
+//     fscanf(fp1, "%u %u", &width, &height);
+//     // fscanf(fp1, "%u", (unsigned int)&max_intensity);
+
+//     //copy header to output file
+//     fprintf(fp2, "%s", format_var);
+//     fprintf(fp2, "%u %u", width, height);
+
+
+//     //add null terminator 
+//     char *full_message = malloc(length + 1); 
+//     strcpy(full_message, message);
+//     full_message[length] = '\0';
+//     fclose(fp1);
+//     fclose(fp2);
+//     return 0;
+// }
 
 char *reveal_message(char *input_filename) {
     (void)input_filename;

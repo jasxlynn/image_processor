@@ -202,11 +202,14 @@ QTNode *load_preorder_qt(char *filename) {
 QTNode *load_preorder_qt_helper(FILE *fp) {
     char type;
     if (fscanf(fp, " %c", &type) != 1) {
+        fclose(fp);
         return NULL;
     }
+    printf("type %c\n", type);
 
     QTNode *node = malloc(sizeof(QTNode));
     if (node == NULL) {
+        fclose(fp);
         exit(EXIT_FAILURE); 
     }
 
@@ -219,16 +222,22 @@ QTNode *load_preorder_qt_helper(FILE *fp) {
     node->col = col;
     node->width = width;
 
+    printf("intensity %u\n", intensity);
+
     for (int i = 0; i < 4; i++) {
         node->children[i] = NULL;
     }
 
     if (type == 'N') {
-        for (int i = 0; i < 4; i++) {
-            node->children[i] = load_preorder_qt_helper(fp);
+        node->children[0] = load_preorder_qt_helper(fp);
+        if(node->width > 1){
+            node->children[1] = load_preorder_qt_helper(fp);
+        }else if(node->height > 1){
+            node->children[2] = load_preorder_qt_helper(fp);
+        }else if(node->width > 1 && node->height > 1){
+            node->children[3] = load_preorder_qt_helper(fp);
         }
     }
-
     return node;
 }
 
@@ -255,7 +264,7 @@ void save_preorder_qt_helper(QTNode *node, FILE *fp){
     col = node->col;
     width = node->width;
 
-     int isLeaf = 1;
+    int isLeaf = 1;
     for (int i = 0; i < 4; i++) {
         if (node->children[i] != NULL) {
             isLeaf = 0; 
