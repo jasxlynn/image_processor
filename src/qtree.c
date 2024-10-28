@@ -202,16 +202,11 @@ QTNode *load_preorder_qt(char *filename) {
 QTNode *load_preorder_qt_helper(FILE *fp) {
     char type;
     if (fscanf(fp, " %c", &type) != 1) {
-        fclose(fp);
         return NULL;
     }
     printf("type %c\n", type);
 
     QTNode *node = malloc(sizeof(QTNode));
-    if (node == NULL) {
-        fclose(fp);
-        exit(EXIT_FAILURE); 
-    }
 
     unsigned int intensity, row, height, col, width;
 
