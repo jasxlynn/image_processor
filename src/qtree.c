@@ -229,9 +229,9 @@ QTNode *load_preorder_qt_helper(FILE *fp) {
 
     if (type == 'N') {
         node->children[0] = load_preorder_qt_helper(fp);
-        if(node->row > 1){
+        if(node->col > 1){
             node->children[1] = load_preorder_qt_helper(fp);
-        }else if(node->col > 1){
+        }else if(node->row > 1){
             node->children[2] = load_preorder_qt_helper(fp);
         }else if(node->row > 1 && node->col > 1){
             node->children[3] = load_preorder_qt_helper(fp);
