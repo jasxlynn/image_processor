@@ -109,24 +109,22 @@ unsigned int hide_message(char *message, char *input_filename, char *output_file
     for(int i = 0; i < pixel_count; i++){
         int r, g, b;
         fscanf(read, "%d %d %d", &r, &g, &b);
-        pixels[i] = r; 
+        pixels[i] = r;
     }
 
     char msg_cpy[msg_len + 1];
     strcpy(msg_cpy, message);
-    msg_cpy[msg_len + 1] = '\0';
-
     if(msg_len >= max_chars){
-        msg_cpy[max_chars] = '\0';
+        msg_cpy[msg_len - 1] = '\0';
     }
 
-    for(int i = 0; i < max_chars && i < msg_len; i++){
-        char curr_char = msg_cpy[i];
-        for(int j = 0; j < 8; j++){
-            int bit_val = (curr_char >> (7 - i)) & 1;
-            pixels[i] = (pixels[i] & ~1) | bit_val;
-        }
+   for (int i = 0; i < max_chars; i++) {
+    char curr_char = message[i];
+    for (int bit = 0; bit < 8; bit++) {
+        int bit_value = (curr_char >> (7 - bit)) & 1; 
+        pixels[i * 8 + bit] = (pixels[i * 8 + bit] & ~1) | bit_value; 
     }
+}
 
     //writing to output file
     fprintf(write, "P3\n%u %u\n255\n", width, height);
@@ -138,7 +136,6 @@ unsigned int hide_message(char *message, char *input_filename, char *output_file
     fclose(write);
     return max_chars;
 }
-
 
 
 char *reveal_message(char *input_filename) {
