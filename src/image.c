@@ -114,8 +114,9 @@ unsigned int hide_message(char *message, char *input_filename, char *output_file
 
     char msg_cpy[msg_len + 1];
     strcpy(msg_cpy, message);
+    int chars_to_encode = (msg_len >= max_chars) ? max_chars - 1 : msg_len;
 
-    for (int i = 0; i < (max_chars - 1) && i < msg_len; i++) {
+    for (int i = 0; i < chars_to_encode && i < msg_len; i++) {
     char curr_char = msg_cpy[i];
     printf("Encoding character: %c (ASCII %d)\n", curr_char, curr_char);
         for (int bit = 0; bit < 8; bit++) {
@@ -124,12 +125,11 @@ unsigned int hide_message(char *message, char *input_filename, char *output_file
             pixels[i * 8 + bit] = (pixels[i * 8 + bit] & ~1) | bit_value;
         }
     }
-    if ((max_chars - 1) > 0) {
-        char null_char = '\0';  
-        for (int bit = 0; bit < 8; bit++) {
-            int bit_value = (null_char >> (7 - bit)) & 1;
-            pixels[(max_chars - 1) * 8 + bit] = (pixels[(max_chars - 1) * 8 + bit] & ~1) | bit_value;
-        }
+    char null_char = '\0';
+    for (int bit = 0; bit < 8; bit++) {
+        int pixel_index = (chars_to_encode * 8 + bit);
+        int bit_value = (null_char >> (7 - bit)) & 1;
+        pixels[pixel_index] = (pixels[pixel_index] & ~1) | bit_value;
     }
 
     //writing to output file
@@ -140,7 +140,7 @@ unsigned int hide_message(char *message, char *input_filename, char *output_file
 
     fclose(read);
     fclose(write);
-    return msg_len;
+    return chars_to_encode;
 }
 
 
