@@ -204,7 +204,6 @@ QTNode *load_preorder_qt_helper(FILE *fp) {
     if (fscanf(fp, " %c", &type) != 1) {
         return NULL;
     }
-    printf("type %c\n", type);
 
     QTNode *node = malloc(sizeof(QTNode));
 
@@ -216,12 +215,6 @@ QTNode *load_preorder_qt_helper(FILE *fp) {
     node->height = height;
     node->col = col;
     node->width = width;
-
-    printf("intensity %u\n", intensity);
-    printf("row %u\n", row); 
-    printf("height %u \n",height);
-    printf("col %u \n",col);
-    printf("width %u \n",width);
 
     for (int i = 0; i < 4; i++) {
         node->children[i] = NULL;

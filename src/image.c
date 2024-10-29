@@ -1,6 +1,9 @@
-
 #include "image.h"
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
 
 Image *load_image(char *filename) {    
     FILE *fp = fopen(filename, "r");
@@ -71,11 +74,72 @@ unsigned char get_image_intensity(Image *image, unsigned int row, unsigned int c
 }
 
 unsigned int hide_message(char *message, char *input_filename, char *output_filename) {
+    FILE *read = fopen(input_filename, "r");
+    FILE *write = fopen(output_filename, "w");
     (void)message;
-    (void)input_filename;
-    (void)output_filename;
-    return 0;
+
+    if(read == NULL || write == NULL){
+        ERROR("error opening files");
+        return 0;
+    }
+
+    char buffer[256];
+    unsigned int width, height;
+    char format_variant[3];
+    fgets(buffer, sizeof(buffer), read);
+    sscanf(buffer, "%s", format_variant);
+    if(strcmp(format_variant, "P3") != 0){
+        ERROR("Invalid file type");
+        fclose(read);
+        fclose(write);
+        exit(EXIT_FAILURE); 
+    }   
+    fgets(buffer, sizeof(buffer), read);
+    while(buffer[0] == '#'){
+        fgets(buffer, sizeof(buffer), read);
+    }
+    sscanf(buffer, "%u %u", &width, &height); 
+    fgets(buffer, sizeof(buffer),read);
+
+    int pixel_count = width * height;
+    int max_chars = ceil(pixel_count / 8);
+    int msg_len = strlen(message);
+    int pixels[pixel_count];
+
+    for(int i = 0; i < pixel_count; i++){
+        int r, g, b;
+        fscanf(read, "%d %d %d", &r, &g, &b);
+        pixels[i] = r; 
+    }
+
+    char msg_cpy[msg_len + 1];
+    strcpy(msg_cpy, message);
+    msg_cpy[msg_len + 1] = '\0';
+
+    if(msg_len >= max_chars){
+        msg_cpy[max_chars] = '\0';
+    }
+
+    for(int i = 0; i < max_chars && i < msg_len; i++){
+        char curr_char = msg_cpy[i];
+        for(int j = 0; j < 8; j++){
+            int bit_val = (curr_char >> (7 - i)) & 1;
+            pixels[i] = (pixels[i] & ~1) | bit_val;
+        }
+    }
+
+    //writing to output file
+    fprintf(write, "P3\n%u %u\n255\n", width, height);
+    for(int i = 0; i < pixel_count; i++){
+        fprintf(write, "%u %u %u\n", pixels[i], pixels[i],pixels[i]);
+    }
+
+    fclose(read);
+    fclose(write);
+    return max_chars;
 }
+
+
 
 char *reveal_message(char *input_filename) {
     (void)input_filename;

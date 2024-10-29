@@ -59,8 +59,8 @@ int main() {
     delete_quadtree(root);
 
     // /******************************* hide_message and reveal_message *******************************/
-    // prepare_input_image_file("wolfie-tiny.ppm");
-    // hide_message("0000000000111111111122222222223333333333", "images/wolfie-tiny.ppm", "tests/output/hide_message1.ppm");
+    prepare_input_image_file("wolfie-tiny.ppm");
+    hide_message("0000000000111111111122222222223333333333", "images/tiny.ppm", "tests/output/hide_message1.ppm");
     // char *message = reveal_message("tests/output/hide_message1.ppm");
     // printf("Message: %s\n", message);
     // free(message);
