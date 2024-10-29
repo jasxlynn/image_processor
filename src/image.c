@@ -140,7 +140,7 @@ unsigned int hide_message(char *message, char *input_filename, char *output_file
 
     fclose(read);
     fclose(write);
-    return max_chars;
+    return msg_len;
 }
 
 
