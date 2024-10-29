@@ -114,17 +114,23 @@ unsigned int hide_message(char *message, char *input_filename, char *output_file
 
     char msg_cpy[msg_len + 1];
     strcpy(msg_cpy, message);
-    if(msg_len >= max_chars){
-        msg_cpy[msg_len - 1] = '\0';
-    }
 
-   for (int i = 0; i < max_chars; i++) {
-    char curr_char = message[i];
-    for (int bit = 0; bit < 8; bit++) {
-        int bit_value = (curr_char >> (7 - bit)) & 1; 
-        pixels[i * 8 + bit] = (pixels[i * 8 + bit] & ~1) | bit_value; 
+    for (int i = 0; i < (max_chars - 1) && i < msg_len; i++) {
+    char curr_char = msg_cpy[i];
+    printf("Encoding character: %c (ASCII %d)\n", curr_char, curr_char);
+        for (int bit = 0; bit < 8; bit++) {
+            int bit_value = (curr_char >> (7 - bit)) & 1;
+            printf("Bit %d of character '%c': %d\n", bit, curr_char, bit_value);
+            pixels[i * 8 + bit] = (pixels[i * 8 + bit] & ~1) | bit_value;
+        }
     }
-}
+    if ((max_chars - 1) > 0) {
+        char null_char = '\0';  
+        for (int bit = 0; bit < 8; bit++) {
+            int bit_value = (null_char >> (7 - bit)) & 1;
+            pixels[(max_chars - 1) * 8 + bit] = (pixels[(max_chars - 1) * 8 + bit] & ~1) | bit_value;
+        }
+    }
 
     //writing to output file
     fprintf(write, "P3\n%u %u\n255\n", width, height);
