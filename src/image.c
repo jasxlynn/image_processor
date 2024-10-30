@@ -76,7 +76,6 @@ unsigned char get_image_intensity(Image *image, unsigned int row, unsigned int c
 unsigned int hide_message(char *message, char *input_filename, char *output_filename) {
     FILE *read = fopen(input_filename, "r");
     FILE *write = fopen(output_filename, "w");
-    (void)message;
 
     if(read == NULL || write == NULL){
         ERROR("error opening files");
@@ -145,8 +144,56 @@ unsigned int hide_message(char *message, char *input_filename, char *output_file
 
 
 char *reveal_message(char *input_filename) {
-    (void)input_filename;
-    return NULL;
+    FILE *fp = fopen(input_filename, "r");
+    if(fp == NULL){
+        fclose(fp); 
+        ERROR("error opening file");
+        exit(EXIT_FAILURE);
+    }
+    char buffer[256];
+    unsigned int width, height;
+    char format_variant[3];
+    fgets(buffer, sizeof(buffer), fp);
+    sscanf(buffer, "%s", format_variant);
+    if(strcmp(format_variant, "P3") != 0){
+        ERROR("Invalid file type");
+        fclose(fp);
+        exit(EXIT_FAILURE); 
+    }   
+    fgets(buffer, sizeof(buffer), fp);
+    while(buffer[0] == '#'){
+        fgets(buffer, sizeof(buffer), fp);
+    }
+    sscanf(buffer, "%u %u", &width, &height); 
+    fgets(buffer, sizeof(buffer),fp);
+
+    int pixel_count = width * height;
+    int pixels[pixel_count];
+
+    for(int i = 0; i < pixel_count; i++){
+        int r, g, b;
+        fscanf(fp, "%d %d %d", &r, &g, &b);
+        pixels[i] = r;
+    }
+    
+    int num_chars = (pixel_count / 8) - 1; //number of characters encoded without null terminator
+    char *message = (char *)malloc((num_chars + 1) * sizeof(char));
+
+    int bits[8];
+    int bit_index = 0; 
+    int msg_index = 0;
+    for(int i = 0; i < pixel_count; i++){
+        bits[bit_index] = pixels[i] & 1;
+        bit_index++; 
+        if(bit_index == 8){
+            char ascii_char = (bits[0] << 7) | (bits[1] << 6) | (bits[2] << 5) | (bits[3] << 4) | (bits[4] << 3) | (bits[5] << 2) |(bits[6] << 1) | bits[7];
+            message[msg_index] = ascii_char;
+            msg_index++;
+            bit_index = 0;
+        }
+    }
+    message[msg_index] = '\0';
+    return message;
 }
 
 unsigned int hide_image(char *secret_image_filename, char *input_filename, char *output_filename) {
