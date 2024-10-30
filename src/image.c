@@ -240,7 +240,7 @@ unsigned int hide_image(char *secret_image_filename, char *input_filename, char 
     
 
     int num_input_pixels = input_width * input_height; 
-    int input_pixels[num_input_pixels + 2];
+    int input_pixels[num_input_pixels];
     for(int i = 0; i < num_input_pixels; i++){
         int r, g, b;
         fscanf(input, "%d %d %d", &r, &g, &b);
@@ -248,9 +248,13 @@ unsigned int hide_image(char *secret_image_filename, char *input_filename, char 
     }
     int dimensions[2] = {secret_width, secret_height}; // Array to hold both width and height
 
-    if(num_input_pixels < num_secret_pixels + 2){
+    if(num_input_pixels < (16 + 8 * num_secret_pixels)){
+        fclose(secret);
+        fclose(input);
+        fclose(write);
         return 0;
     }else {
+        
            // Loop over both dimensions (0 for width, 1 for height)
         for (int i = 0; i < 2; i++) {
             int dimension_value = dimensions[i]; 
