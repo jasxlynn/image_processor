@@ -175,7 +175,7 @@ char *reveal_message(char *input_filename) {
         pixels[i] = r;
     }
     
-    int num_chars = (pixel_count / 8); //number of characters encoded without null terminator
+    int num_chars = (pixel_count / 8); 
     char *message = (char *)malloc((num_chars + 1) * sizeof(char));
 
     int bits[8];
@@ -197,10 +197,90 @@ char *reveal_message(char *input_filename) {
 }
 
 unsigned int hide_image(char *secret_image_filename, char *input_filename, char *output_filename) {
-    (void)secret_image_filename;
-    (void)input_filename;
-    (void)output_filename;
-    return 10;
+    FILE *secret = fopen(secret_image_filename, "r");
+    FILE *input = fopen(input_filename, "r");
+    FILE *write = fopen(output_filename, "w");
+    if(secret == NULL || input == NULL || write == NULL){
+        fclose(secret);
+        fclose(input); 
+        ERROR("error opening file");
+        exit(EXIT_FAILURE);
+    }
+
+    char buffer[256];
+    unsigned int secret_width, secret_height;
+    fgets(buffer, sizeof(buffer), secret);
+    fgets(buffer, sizeof(buffer), secret);
+    while(buffer[0] == '#'){
+        fgets(buffer, sizeof(buffer), secret);
+    }
+    sscanf(buffer, "%u %u", &secret_width, &secret_height); 
+    printf("Secret width: %u Secret Height %u\n", secret_width,secret_height);
+    fgets(buffer, sizeof(buffer),secret);
+
+    int num_secret_pixels = secret_width * secret_height;
+    int secret_pixels[num_secret_pixels];
+    for(int i = 0; i < num_secret_pixels; i++){
+        int r, g, b;
+        fscanf(secret, "%d %d %d", &r, &g, &b);
+        secret_pixels[i] = r;
+    }
+    
+    unsigned int input_width, input_height;
+    char buffer2[256];
+    fgets(buffer2, sizeof(buffer), input);
+    fgets(buffer2, sizeof(buffer), input);
+    while(buffer2[0] == '#'){
+        fgets(buffer2, sizeof(buffer), input);
+    }
+    sscanf(buffer2, "%u %u", &input_width, &input_height); 
+    printf("Input width: %u Input Height %u\n", input_width,input_height);
+    fgets(buffer2, sizeof(buffer),input);
+    
+
+    int num_input_pixels = input_width * input_height; 
+    int input_pixels[num_input_pixels + 2];
+    for(int i = 0; i < num_input_pixels; i++){
+        int r, g, b;
+        fscanf(input, "%d %d %d", &r, &g, &b);
+        input_pixels[i] = r;
+    }
+    int dimensions[2] = {secret_width, secret_height}; // Array to hold both width and height
+
+    if(num_input_pixels < num_secret_pixels + 2){
+        return 0;
+    }else {
+           // Loop over both dimensions (0 for width, 1 for height)
+        for (int i = 0; i < 2; i++) {
+            int dimension_value = dimensions[i]; 
+            for (int bit = 0; bit < 8; bit++) {
+                int bit_value = (dimension_value >> (7 - bit)) & 1;
+                printf("Number: %u Bit %u: %u\n\n", dimension_value,bit, bit_value);
+                input_pixels[(i * 8) + bit] = (input_pixels[(i * 8) + bit] & ~1) | bit_value; 
+            }
+        }
+        int index = 16; //starting after encoding of width and height
+        for(int i = 0; i < num_secret_pixels; i++){
+            int curr_pixel = secret_pixels[i];
+            for(int bit = 0; bit < 8; bit++){
+                int bit_value = (curr_pixel >> (7 - bit)) & 1;
+                printf("Number: %u Bit %u: %u\n\n", curr_pixel,bit, bit_value);
+                input_pixels[(index * 8) + bit] = (input_pixels[(index * 8) + bit] & ~1) | bit_value; 
+                index++;
+            }
+
+        }
+    }
+
+    fprintf(write, "P3\n%u %u\n255\n", input_width, input_height);
+    for(int i = 0; i < num_input_pixels; i++){
+        fprintf(write, "%u %u %u\n", input_pixels[i], input_pixels[i], input_pixels[i]);
+    }
+
+    fclose(secret);
+    fclose(input);
+    fclose(write);
+    return 1;
 }
 
 void reveal_image(char *input_filename, char *output_filename) {

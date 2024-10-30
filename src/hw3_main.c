@@ -66,8 +66,8 @@ int main() {
     free(message);
 
     // /******************************* hide_image and reveal_image *******************************/
-    // hide_image("images/wolfie-tiny.ppm", "images/building1.ppm", "tests/output/hide_image1.ppm");
-    // reveal_image("tests/output/hide_image1.ppm", "tests/output/reveal_image1.ppm");
+    hide_image("images/wolfie-tiny.ppm", "images/building1.ppm", "tests/output/hide_image1.ppm");
+    reveal_image("tests/output/hide_image1.ppm", "tests/output/reveal_image1.ppm");
 
     return 0;
 }
