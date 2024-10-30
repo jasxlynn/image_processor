@@ -203,6 +203,7 @@ unsigned int hide_image(char *secret_image_filename, char *input_filename, char 
     if(secret == NULL || input == NULL || write == NULL){
         fclose(secret);
         fclose(input); 
+        fclose(write);
         ERROR("error opening file");
         exit(EXIT_FAILURE);
     }
@@ -265,7 +266,7 @@ unsigned int hide_image(char *secret_image_filename, char *input_filename, char 
             for(int bit = 0; bit < 8; bit++){
                 int bit_value = (curr_pixel >> (7 - bit)) & 1;
                 printf("Number: %u Bit %u: %u\n\n", curr_pixel,bit, bit_value);
-                input_pixels[(index * 8) + bit] = (input_pixels[(index * 8) + bit] & ~1) | bit_value; 
+                input_pixels[index] = (input_pixels[index] & ~1) | bit_value; 
                 index++;
             }
 
@@ -276,7 +277,6 @@ unsigned int hide_image(char *secret_image_filename, char *input_filename, char 
     for(int i = 0; i < num_input_pixels; i++){
         fprintf(write, "%u %u %u\n", input_pixels[i], input_pixels[i], input_pixels[i]);
     }
-
     fclose(secret);
     fclose(input);
     fclose(write);
