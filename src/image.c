@@ -151,14 +151,7 @@ char *reveal_message(char *input_filename) {
     }
     char buffer[256];
     unsigned int width, height;
-    char format_variant[3];
     fgets(buffer, sizeof(buffer), fp);
-    sscanf(buffer, "%s", format_variant);
-    if(strcmp(format_variant, "P3") != 0){
-        ERROR("Invalid file type");
-        fclose(fp);
-        exit(EXIT_FAILURE); 
-    }   
     fgets(buffer, sizeof(buffer), fp);
     while(buffer[0] == '#'){
         fgets(buffer, sizeof(buffer), fp);
@@ -216,7 +209,6 @@ unsigned int hide_image(char *secret_image_filename, char *input_filename, char 
         fgets(buffer, sizeof(buffer), secret);
     }
     sscanf(buffer, "%u %u", &secret_width, &secret_height); 
-    printf("Secret width: %u Secret Height %u\n", secret_width,secret_height);
     fgets(buffer, sizeof(buffer),secret);
 
     int num_secret_pixels = secret_width * secret_height;
@@ -235,7 +227,6 @@ unsigned int hide_image(char *secret_image_filename, char *input_filename, char 
         fgets(buffer2, sizeof(buffer), input);
     }
     sscanf(buffer2, "%u %u", &input_width, &input_height); 
-    printf("Input width: %u Input Height %u\n", input_width,input_height);
     fgets(buffer2, sizeof(buffer),input);
     
 
@@ -260,7 +251,6 @@ unsigned int hide_image(char *secret_image_filename, char *input_filename, char 
             int dimension_value = dimensions[i]; 
             for (int bit = 0; bit < 8; bit++) {
                 int bit_value = (dimension_value >> (7 - bit)) & 1;
-                printf("Number: %u Bit %u: %u\n\n", dimension_value,bit, bit_value);
                 input_pixels[(i * 8) + bit] = (input_pixels[(i * 8) + bit] & ~1) | bit_value; 
             }
         }
@@ -269,7 +259,6 @@ unsigned int hide_image(char *secret_image_filename, char *input_filename, char 
             int curr_pixel = secret_pixels[i];
             for(int bit = 0; bit < 8; bit++){
                 int bit_value = (curr_pixel >> (7 - bit)) & 1;
-                printf("Number: %u Bit %u: %u\n\n", curr_pixel,bit, bit_value);
                 input_pixels[index] = (input_pixels[index] & ~1) | bit_value; 
                 index++;
             }
@@ -288,6 +277,65 @@ unsigned int hide_image(char *secret_image_filename, char *input_filename, char 
 }
 
 void reveal_image(char *input_filename, char *output_filename) {
-    (void)input_filename;
-    (void)output_filename;
+    FILE *read = fopen(input_filename, "r");
+    FILE *write = fopen(output_filename, "w");
+
+    if(read == NULL || write == NULL){
+        fclose(read);
+        fclose(write);
+        ERROR("Error opening files");
+        exit(EXIT_FAILURE);
+    }
+    char buffer[256];
+    unsigned int width, height;
+    fgets(buffer, sizeof(buffer), read);
+    fgets(buffer, sizeof(buffer), read);
+    while(buffer[0] == '#'){
+        fgets(buffer, sizeof(buffer), read);
+    }
+    sscanf(buffer, "%u %u", &width, &height); 
+    fgets(buffer, sizeof(buffer),read);
+
+    int pixel_count = width * height;
+    int pixels[pixel_count];
+    
+    for(int i = 0; i < pixel_count; i++){
+        int r, g, b;
+        fscanf(read, "%d %d %d", &r, &g, &b);
+        pixels[i] = r;
+    }
+
+    int output_width, output_height; 
+    int bits[8];
+    int bit_index = 0;
+    for(int i = 0; i < 8; i++){
+        bits[bit_index] = pixels[i] & 1;
+        bit_index++;
+    }
+    output_width = (bits[0] << 7) | (bits[1] << 6) | (bits[2] << 5) | (bits[3] << 4) | (bits[4] << 3) | (bits[5] << 2) |(bits[6] << 1) | bits[7];
+    bit_index = 0;
+    for(int i = 8; i < 16; i++){
+        bits[bit_index] = pixels[i] & 1;
+        bit_index++;
+    }
+    output_height = (bits[0] << 7) | (bits[1] << 6) | (bits[2] << 5) | (bits[3] << 4) | (bits[4] << 3) | (bits[5] << 2) |(bits[6] << 1) | bits[7];
+
+    int num_hidden_pixels = output_width * output_height;
+    int output_pixels[num_hidden_pixels];
+    printf("Width %d Height %d\n",output_width, output_height);
+
+    int index = 16;
+    for(int i = 0; i < num_hidden_pixels; i++){
+        for (int bit = 0; bit < 8; bit++) {
+            bits[bit] = (pixels[index] & 1);
+            index++;
+        }
+        output_pixels[i] = (bits[0] << 7) | (bits[1] << 6) | (bits[2] << 5) | (bits[3] << 4) | (bits[4] << 3) | (bits[5] << 2) |(bits[6] << 1) | bits[7];
+    }
+    fprintf(write, "P3\n%u %u\n%u\n", output_width, output_height, 255);
+    for(int i = 0; i < num_hidden_pixels; i++){
+        fprintf(write, "%d %d %d\n", output_pixels[i], output_pixels[i], output_pixels[i]);
+    }
+    fclose(read);
+    fclose(write);
 }
