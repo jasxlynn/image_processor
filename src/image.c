@@ -117,13 +117,12 @@ unsigned int hide_message(char *message, char *input_filename, char *output_file
 
     for (int i = 0; i < chars_to_encode && i < msg_len; i++) {
     char curr_char = msg_cpy[i];
-    printf("Encoding character: %c (ASCII %d)\n", curr_char, curr_char);
         for (int bit = 0; bit < 8; bit++) {
             int bit_value = (curr_char >> (7 - bit)) & 1;
-            printf("Bit %d of character '%c': %d\n", bit, curr_char, bit_value);
             pixels[i * 8 + bit] = (pixels[i * 8 + bit] & ~1) | bit_value;
         }
     }
+    //encode null terminator
     char null_char = '\0';
     for (int bit = 0; bit < 8; bit++) {
         int pixel_index = (chars_to_encode * 8 + bit);
@@ -176,7 +175,7 @@ char *reveal_message(char *input_filename) {
         pixels[i] = r;
     }
     
-    int num_chars = (pixel_count / 8) - 1; //number of characters encoded without null terminator
+    int num_chars = (pixel_count / 8); //number of characters encoded without null terminator
     char *message = (char *)malloc((num_chars + 1) * sizeof(char));
 
     int bits[8];
@@ -193,6 +192,7 @@ char *reveal_message(char *input_filename) {
         }
     }
     message[msg_index] = '\0';
+    fclose(fp);
     return message;
 }
 
